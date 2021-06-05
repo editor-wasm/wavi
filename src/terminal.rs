@@ -15,6 +15,7 @@ pub struct Terminal {
 }
 
 impl Terminal {
+    /// # Errors
     pub fn default() -> Result<Self, std::io::Error> {
         let size = termion::terminal_size()?;
         Ok(Terminal {
@@ -45,10 +46,12 @@ impl Terminal {
         print!("{}", termion::cursor::Goto(x, y));
     }
 
+    /// # Errors
     pub fn flush() -> Result<(), std::io::Error> {
         io::stdout().flush()
     }
 
+    /// # Errors
     pub fn read_key() -> Result<Key, std::io::Error> {
         loop {
             if let Some(key) = io::stdin().lock().keys().next() {
