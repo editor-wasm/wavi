@@ -133,7 +133,7 @@ impl Editor {
             StatusMessage::from("File saved successfully.".to_string())
         } else {
             StatusMessage::from("Error writing file!".to_string())
-        }
+        };
     }
 
     fn search(&mut self) {
