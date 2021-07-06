@@ -64,11 +64,11 @@ impl Row {
     }
 
     pub fn len(&self) -> usize {
-        self.string[..].graphemes(true).count()
+        self.len
     }
 
     pub fn is_empty(&self) -> bool {
-        self.string.is_empty()
+        self.len == 0
     }
 
     #[allow(clippy::integer_arithmetic)]
@@ -239,7 +239,7 @@ impl Row {
         true
     }
 
-    fn highlighting_keywords(
+    fn highlight_keywords(
         &mut self,
         index: &mut usize,
         chars: &[char],
@@ -272,7 +272,7 @@ impl Row {
         opts: &HighlightingOptions,
         chars: &[char],
     ) -> bool {
-        self.highlighting_keywords(
+        self.highlight_keywords(
             index,
             chars,
             opts.primary_keywords(),
@@ -286,7 +286,7 @@ impl Row {
         opts: &HighlightingOptions,
         chars: &[char],
     ) -> bool {
-        self.highlighting_keywords(
+        self.highlight_keywords(
             index,
             chars,
             opts.secondary_keywords(),
@@ -446,6 +446,7 @@ impl Row {
             }
             return false;
         }
+        self.highlighting = Vec::new();
         let mut index = 0;
         let mut in_ml_comment = start_with_comment;
         if in_ml_comment {

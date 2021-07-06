@@ -86,6 +86,6 @@ impl Terminal {
     }
 
     pub fn reset_fg_color() {
-        print!("{}", color::Fg(color::Reset))
+        print!("{}", color::Fg(color::Reset));
     }
 }
