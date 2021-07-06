@@ -1,5 +1,5 @@
 [package]
-name = "hecto"
+name = "wavi"
 version = "0.1.0"
 authors = ["Taisei Nakajima <ne300085@senshu-u.jp>"]
 edition = "2018"
