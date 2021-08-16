@@ -11,10 +11,12 @@
 
 mod document;
 mod editor;
+mod extension;
 mod filetype;
 mod highlighting;
 mod row;
 mod terminal;
+
 use document::Document;
 use editor::Editor;
 use editor::Position;
