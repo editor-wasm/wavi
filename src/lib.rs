@@ -28,4 +28,5 @@ use terminal::Terminal;
 
 pub fn run() {
     Editor::default().run();
+    extension::run();
 }
