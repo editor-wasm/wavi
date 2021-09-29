@@ -1,4 +1,6 @@
 use crate::Document;
+use crate::Extension;
+use crate::Extensions;
 use crate::Row;
 use crate::Terminal;
 use std::env;
@@ -6,6 +8,8 @@ use std::time::Duration;
 use std::time::Instant;
 use termion::color;
 use termion::event::Key;
+
+use wasmtime::Engine;
 
 const STATUS_FG_COLOR: color::Rgb = color::Rgb(63, 63, 63);
 const STATUS_BG_COLOR: color::Rgb = color::Rgb(239, 239, 239);
@@ -51,6 +55,13 @@ pub struct Editor {
 
 impl Editor {
     pub fn run(&mut self) {
+        let engine = Engine::default();
+
+        let mut extensions = Extensions::default();
+        extensions
+            .extensions
+            .push(Extension::default(engine, "extension"));
+
         loop {
             if let Err(error) = self.refresh_screen() {
                 die(&error);

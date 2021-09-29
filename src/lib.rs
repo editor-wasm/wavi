@@ -26,6 +26,9 @@ use filetype::HighlightingOptions;
 use row::Row;
 use terminal::Terminal;
 
+use extension::Extension;
+use extension::Extensions;
+
 pub fn run() {
     Editor::default().run();
     extension::run();

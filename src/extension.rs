@@ -1,9 +1,19 @@
+use std::env;
 use wasmtime::*;
 use wasmtime_wasi::sync::WasiCtxBuilder;
 
 pub struct Extensions<T> {
     pub engine: Engine,
     pub extensions: Vec<Extension<T>>,
+}
+
+impl Extensions<wasmtime_wasi::WasiCtx> {
+    pub fn default() -> Self {
+        Extensions {
+            engine: Engine::default(),
+            extensions: Vec::<Extension<wasmtime_wasi::WasiCtx>>::new(),
+        }
+    }
 }
 
 pub struct Extension<T> {
@@ -14,8 +24,7 @@ pub struct Extension<T> {
 
 impl Extension<wasmtime_wasi::WasiCtx> {
     pub fn default(engine: Engine, name: &str) -> Self {
-        let module =
-            Module::from_file(&engine, format!("./extension/src/wasm/{}.wasm", name)).unwrap();
+        let module = Module::from_file(&engine, format!("extensions/{}.wasm", name)).unwrap();
 
         let mut linker = Linker::new(&engine);
         // wasi setup
