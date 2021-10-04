@@ -1,4 +1,6 @@
 use std::env;
+use std::fs;
+use std::io::Error;
 use wasmtime::*;
 use wasmtime_wasi::sync::WasiCtxBuilder;
 
@@ -9,9 +11,12 @@ pub struct Extensions<T> {
 
 impl Extensions<wasmtime_wasi::WasiCtx> {
     pub fn default() -> Self {
+        let engine = Engine::default();
+        let extensions = Extension::default(&engine);
+
         Extensions {
             engine: Engine::default(),
-            extensions: Vec::<Extension<wasmtime_wasi::WasiCtx>>::new(),
+            extensions,
         }
     }
 }
@@ -23,20 +28,29 @@ pub struct Extension<T> {
 }
 
 impl Extension<wasmtime_wasi::WasiCtx> {
-    pub fn default(engine: Engine, name: &str) -> Self {
-        let module = Module::from_file(&engine, format!("extensions/{}.wasm", name)).unwrap();
+    pub fn default(engine: &Engine) -> Vec<Extension<wasmtime_wasi::WasiCtx>> {
+        let mut result = Vec::new();
+        let files = fs::read_dir("wavi/src/extension.rs");
 
-        let mut linker = Linker::new(&engine);
-        // wasi setup
-        wasmtime_wasi::add_to_linker(&mut linker, |s| s).unwrap();
-        let wasi = WasiCtxBuilder::new().inherit_stdio().build();
+        if let Ok(files) = files {
+            for file in files {
+                let file = file.unwrap();
 
-        let mut store = Store::new(&engine, wasi);
-
-        Extension {
-            store,
-            module,
-            linker,
+                let module = Module::from_file(&engine, file.path()).unwrap();
+                let mut linker = Linker::new(&engine);
+                // wasi setup
+                wasmtime_wasi::add_to_linker(&mut linker, |s| s).unwrap();
+                let wasi = WasiCtxBuilder::new().inherit_stdio().build();
+                let mut store = Store::new(&engine, wasi);
+                result.push(Extension {
+                    store,
+                    module,
+                    linker,
+                });
+            }
+            result
+        } else {
+            vec![]
         }
     }
 }

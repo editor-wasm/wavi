@@ -57,10 +57,7 @@ impl Editor {
     pub fn run(&mut self) {
         let engine = Engine::default();
 
-        let mut extensions = Extensions::default();
-        extensions
-            .extensions
-            .push(Extension::default(engine, "extension"));
+        let extensions = Extensions::default();
 
         loop {
             if let Err(error) = self.refresh_screen() {
