@@ -1,5 +1,4 @@
 use crate::Document;
-use crate::Extension;
 use crate::Extensions;
 use crate::Row;
 use crate::Terminal;
@@ -42,7 +41,7 @@ pub struct Position {
     pub y: usize,
 }
 
-pub struct Editor {
+pub struct Editor<T> {
     should_quit: bool,
     terminal: Terminal,
     cursor_position: Position,
@@ -51,14 +50,11 @@ pub struct Editor {
     status_message: StatusMessage,
     quit_times: u8,
     highlighted_word: Option<String>,
+    extensions: Extensions<T>,
 }
 
-impl Editor {
+impl Editor<wasmtime_wasi::WasiCtx> {
     pub fn run(&mut self) {
-        let engine = Engine::default();
-
-        let extensions = Extensions::default();
-
         loop {
             if let Err(error) = self.refresh_screen() {
                 die(&error);
@@ -97,6 +93,7 @@ impl Editor {
             status_message: StatusMessage::from(initial_status),
             quit_times: QUIT_TIMES,
             highlighted_word: None,
+            extensions: Extensions::default(),
         }
     }
 
