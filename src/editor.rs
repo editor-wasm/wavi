@@ -1,5 +1,4 @@
 use crate::Document;
-use crate::Extensions;
 use crate::Row;
 use crate::Terminal;
 use std::env;
@@ -7,8 +6,6 @@ use std::time::Duration;
 use std::time::Instant;
 use termion::color;
 use termion::event::Key;
-
-use wasmtime::Engine;
 
 const STATUS_FG_COLOR: color::Rgb = color::Rgb(63, 63, 63);
 const STATUS_BG_COLOR: color::Rgb = color::Rgb(239, 239, 239);
@@ -41,7 +38,7 @@ pub struct Position {
     pub y: usize,
 }
 
-pub struct Editor<T> {
+pub struct Editor {
     should_quit: bool,
     terminal: Terminal,
     cursor_position: Position,
@@ -50,10 +47,10 @@ pub struct Editor<T> {
     status_message: StatusMessage,
     quit_times: u8,
     highlighted_word: Option<String>,
-    extensions: Extensions<T>,
+    // extensions: Extensions<T>,
 }
 
-impl Editor<wasmtime_wasi::WasiCtx> {
+impl Editor {
     pub fn run(&mut self) {
         loop {
             if let Err(error) = self.refresh_screen() {
@@ -93,7 +90,7 @@ impl Editor<wasmtime_wasi::WasiCtx> {
             status_message: StatusMessage::from(initial_status),
             quit_times: QUIT_TIMES,
             highlighted_word: None,
-            extensions: Extensions::default(),
+            // extensions: Extensions::default(),
         }
     }
 

@@ -23,7 +23,7 @@ impl Extensions {
     }
 }
 
-enum WaviStoreType {
+pub enum WaviStoreType {
     WasiCtx(wasmtime_wasi::WasiCtx),
     HostFunc(Func),
 }
@@ -37,7 +37,7 @@ pub struct Extension {
 impl Extension {
     pub fn default(engine: &Engine) -> Vec<Extension> {
         let mut result = Vec::new();
-        let files = fs::read_dir("wavi/src/extension.rs");
+        let files = fs::read_dir("wavi/extensions");
 
         if let Ok(files) = files {
             for file in files {
@@ -49,6 +49,7 @@ impl Extension {
                 wasmtime_wasi::add_to_linker(&mut linker, |s| s).unwrap();
                 let wasi = WasiCtxBuilder::new().inherit_stdio().build();
                 let mut store = Store::new(&engine, WaviStoreType::WasiCtx(wasi));
+
                 result.push(Extension {
                     store,
                     module,
@@ -59,10 +60,6 @@ impl Extension {
         } else {
             vec![]
         }
-    }
-
-    pub fn register_function(&mut self) {
-        let sample = Func::wrap(self.store, |a: i32, b: i32| a + b);
     }
 }
 
