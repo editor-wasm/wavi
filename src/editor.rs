@@ -1,6 +1,7 @@
 use crate::Document;
 use crate::Row;
 use crate::Terminal;
+use crate::Wavi;
 use std::env;
 use std::time::Duration;
 use std::time::Instant;
@@ -39,31 +40,31 @@ pub struct Position {
 }
 
 pub struct Editor {
-    should_quit: bool,
+    pub should_quit: bool,
     terminal: Terminal,
-    cursor_position: Position,
+    pub cursor_position: Position,
     offset: Position,
-    document: Document,
+    pub document: Document,
     status_message: StatusMessage,
     quit_times: u8,
     highlighted_word: Option<String>,
-    // extensions: Extensions<T>,
+    // extensionCtx: ExtensionCtx,
 }
 
 impl Editor {
-    pub fn run(&mut self) {
-        loop {
-            if let Err(error) = self.refresh_screen() {
-                die(&error);
-            }
-            if self.should_quit {
-                break;
-            }
-            if let Err(error) = self.process_keypress() {
-                die(&error);
-            }
-        }
-    }
+    // pub fn run(&mut self, ex_ctx: &mut Wavi) {
+    //     loop {
+    //         if let Err(error) = self.refresh_screen() {
+    //             die(&error);
+    //         }
+    //         if self.should_quit {
+    //             break;
+    //         }
+    //         if let Err(error) = self.process_keypress() {
+    //             die(&error);
+    //         }
+    //     }
+    // }
 
     pub fn default() -> Self {
         let args: Vec<String> = env::args().collect();
@@ -90,11 +91,10 @@ impl Editor {
             status_message: StatusMessage::from(initial_status),
             quit_times: QUIT_TIMES,
             highlighted_word: None,
-            // extensions: Extensions::default(),
         }
     }
 
-    fn refresh_screen(&mut self) -> Result<(), std::io::Error> {
+    pub fn refresh_screen(&mut self) -> Result<(), std::io::Error> {
         Terminal::cursor_hide();
         Terminal::cursor_position(&Position::default());
         if self.should_quit {
@@ -176,7 +176,7 @@ impl Editor {
         self.highlighted_word = None;
     }
 
-    fn process_keypress(&mut self) -> Result<(), std::io::Error> {
+    pub fn process_keypress(&mut self) -> Result<(), std::io::Error> {
         let pressed_key = Terminal::read_key()?;
         match pressed_key {
             Key::Ctrl('q') => {
@@ -238,7 +238,7 @@ impl Editor {
         }
     }
 
-    fn move_cursor(&mut self, key: Key) {
+    pub fn move_cursor(&mut self, key: Key) {
         let terminal_height = self.terminal.size().height as usize;
         let Position { mut x, mut y } = self.cursor_position;
         let height = self.document.len();
@@ -419,9 +419,13 @@ impl Editor {
         }
         Ok(Some(result))
     }
+
+    pub fn insert(&mut self, c: char) {
+        self.document.insert(&self.cursor_position, c);
+    }
 }
 
-fn die(e: &std::io::Error) {
+pub fn die(e: &std::io::Error) {
     Terminal::clear_screen();
     panic!("{}", e);
 }

@@ -11,25 +11,24 @@
 
 mod document;
 mod editor;
-mod extension;
 mod filetype;
 mod highlighting;
+mod hostFunctions;
 mod row;
 mod terminal;
+mod wavi;
 
 use document::Document;
-use editor::Editor;
-use editor::Position;
-use editor::SearchDirection;
+use editor::{die, Editor, Position, SearchDirection};
 use filetype::FileType;
 use filetype::HighlightingOptions;
 use row::Row;
 use terminal::Terminal;
 
-use extension::Extension;
-use extension::Extensions;
+use hostFunctions::register_all;
+use wavi::*;
 
 pub fn run() {
-    Editor::default().run();
-    extension::run();
+    let mut wavi = Wavi::new();
+    wavi.run();
 }
